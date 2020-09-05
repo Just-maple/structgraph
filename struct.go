@@ -15,6 +15,7 @@ type (
 	Option func(d *drawer)
 
 	drawer struct {
+		main          string
 		graph         *gographviz.Graph
 		scopes        []string
 		depth         int
@@ -32,11 +33,15 @@ func GenPuml(app interface{}, opts ...Option) (err error) {
 }
 
 func Draw(in interface{}, opts ...Option) string {
-	graphAst, _ := gographviz.ParseString(`digraph G {}`)
+	v := reflect.ValueOf(in)
+	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+	main := v.Type().Name()
+	graphAst, _ := gographviz.ParseString(fmt.Sprintf(`digraph %s {}`, main))
 	graph := gographviz.NewGraph()
 	_ = gographviz.Analyse(graphAst, graph)
-	v := reflect.ValueOf(in)
-	dw := &drawer{graph: graph, edgeStore: map[string]bool{}}
+	dw := &drawer{graph: graph, edgeStore: map[string]bool{}, main: main}
 	b, _ := getModBase()
 	if len(b) > 0 {
 		dw.scopes = append(dw.scopes, b)
@@ -56,16 +61,20 @@ func (d *drawer) addField(structName string, fieldName string, level int) {
 		size := d.getSize(level)
 		d.addPNode(fmt.Sprintf(`"cluster_%s"`, structName), structName,
 			map[string]string{
-				"fontsize": fmt.Sprintf("%v", size),
-				"margin":   fmt.Sprintf("%v", size*0.01),
-				"shape":    "tab",
+				"fontsize":  fmt.Sprintf("%v", size),
+				"margin":    fmt.Sprintf("%v", size*0.01),
+				"shape":     "tab",
+				"style":     `"filled"`,
+				"fillcolor": `"#b7d3ff"`,
 			})
 		d.addPNode(fmt.Sprintf(`"cluster_%s"`, structName), structName+":"+fieldName,
 			map[string]string{
-				"label":    fieldName,
-				"shape":    "box",
-				"fontsize": fmt.Sprintf("%v", size*0.85),
-				"margin":   fmt.Sprintf("%v", size*0.01),
+				"label":     fieldName,
+				"shape":     "box",
+				"style":     `"filled"`,
+				"fillcolor": `"#f0bca2"`,
+				"fontsize":  fmt.Sprintf("%v", size*0.85),
+				"margin":    fmt.Sprintf("%v", size*0.01),
 			})
 	})
 	d.addEdge(structName, structName+":"+fieldName, map[string]string{"arrowhead": "dot"})
@@ -82,9 +91,11 @@ func (d *drawer) addImpl(itf reflect.Type, implType string, level int) {
 		}
 	}
 	d.addNode(itf.String(), map[string]string{
-		"shape":  "component",
-		"margin": fmt.Sprintf("%v", size*0.01),
-		"label":  fmt.Sprintf(`"%s"`, label)}, level)
+		"shape":     "component",
+		"style":     `"filled"`,
+		"fillcolor": `"#f9e3b5"`,
+		"margin":    fmt.Sprintf("%v", size*0.01),
+		"label":     fmt.Sprintf(`"%s"`, label)}, level)
 	d.addNode(implType, nil, level)
 	d.addEdge(itf.String(), implType, map[string]string{"label": "impl", "style": "dashed"})
 }
@@ -102,10 +113,14 @@ func (d *drawer) addEdge(from string, to string, attrs map[string]string) {
 func (d *drawer) addNode(nodeName string, attrs map[string]string, level int) {
 	d.fn = append(d.fn, func() {
 		if attrs == nil {
-			attrs = map[string]string{}
+			attrs = map[string]string{
+				"shape":     "note",
+				"style":     `"filled"`,
+				"fillcolor": `"#d4f9d1"`,
+			}
 		}
 		attrs["fontsize"] = fmt.Sprintf("%v", d.getSize(level))
-		d.addPNode("G", nodeName, attrs)
+		d.addPNode(d.main, nodeName, attrs)
 	})
 }
 
@@ -124,7 +139,7 @@ func (d *drawer) addSubGraph(nodeName, pkg string, level int) {
 			pkg = strings.Replace(pkg, d.scopes[0], "", -1)
 		}
 		size := d.getSize(level)
-		_ = d.graph.AddSubGraph("G",
+		_ = d.graph.AddSubGraph(d.main,
 			fmt.Sprintf(`"cluster_%s"`, nodeName),
 			map[string]string{
 				"label":    fmt.Sprintf(`"%s"`, pkg),

@@ -8,6 +8,7 @@ import (
 
 type Book struct {
 	DB      database.Store
+	Cache   database.Cache
 	BookDao dao.Book
 }
 

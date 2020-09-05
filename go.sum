@@ -1,7 +1,5 @@
 github.com/awalterschulze/gographviz v0.0.0-20200901124122-0eecad45bd71 h1:m3N1Fv5vE5IcxuTOGFGGV0grrVFHV8UY2SV0wSBXAC8=
 github.com/awalterschulze/gographviz v0.0.0-20200901124122-0eecad45bd71/go.mod h1:/ynarkO/43wP/JM2Okn61e8WFMtdbtA8he7GJxW+SFM=
-github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
-github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
 golang.org/x/mod v0.3.0 h1:RM4zey1++hCTbCVQfnWeKs9/IEsaBLA8vTkd0WVtmH4=

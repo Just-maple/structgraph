@@ -1,4 +1,7 @@
-digraph G {
+digraph Application {
+	"app.Application"->"app.Application:Router"[ arrowhead=dot ];
+	"app.Application:Router"->"http.Handler";
+	"http.Handler"->"http.HandlerFunc"[ label=impl, style=dashed ];
 	"app.Application"->"app.Application:Server"[ arrowhead=dot ];
 	"app.Application:Server"->"net.Listener";
 	"net.Listener"->"net.TCPListener"[ label=impl, style=dashed ];
@@ -30,6 +33,9 @@ digraph G {
 	"svc.IBook"->"svc_impls.Book"[ label=impl, style=dashed ];
 	"svc_impls.Book"->"svc_impls.Book:DB"[ arrowhead=dot ];
 	"svc_impls.Book:DB"->"database.Store";
+	"svc_impls.Book"->"svc_impls.Book:Cache"[ arrowhead=dot ];
+	"svc_impls.Book:Cache"->"database.Cache";
+	"database.Cache"->"database.Redis"[ label=impl, style=dashed ];
 	"svc_impls.Book"->"svc_impls.Book:BookDao"[ arrowhead=dot ];
 	"svc_impls.Book:BookDao"->"dao.Book";
 	"dao.Book"->"dao_impls.bookDao"[ label=impl, style=dashed ];
@@ -41,9 +47,10 @@ digraph G {
 	labelloc=t;
 	margin=40;
 	style=dashed;
-	"app.Application" [ fontsize=40, margin=0.4, shape=tab ];
-	"app.Application:Server" [ fontsize=34, label=Server, margin=0.4, shape=box ];
-	"app.Application:Service" [ fontsize=34, label=Service, margin=0.4, shape=box ];
+	"app.Application" [ fillcolor="#b7d3ff", fontsize=40, margin=0.4, shape=tab, style="filled" ];
+	"app.Application:Router" [ fillcolor="#f0bca2", fontsize=34, label=Router, margin=0.4, shape=box, style="filled" ];
+	"app.Application:Server" [ fillcolor="#f0bca2", fontsize=34, label=Server, margin=0.4, shape=box, style="filled" ];
+	"app.Application:Service" [ fillcolor="#f0bca2", fontsize=34, label=Service, margin=0.4, shape=box, style="filled" ];
 
 }
 ;
@@ -53,10 +60,10 @@ digraph G {
 	labelloc=t;
 	margin=31;
 	style=dashed;
-	"app.Service" [ fontsize=31, margin=0.31, shape=tab ];
-	"app.Service:Book" [ fontsize=26.349999999999998, label=Book, margin=0.31, shape=box ];
-	"app.Service:Pay" [ fontsize=26.349999999999998, label=Pay, margin=0.31, shape=box ];
-	"app.Service:User" [ fontsize=26.349999999999998, label=User, margin=0.31, shape=box ];
+	"app.Service" [ fillcolor="#b7d3ff", fontsize=31, margin=0.31, shape=tab, style="filled" ];
+	"app.Service:Book" [ fillcolor="#f0bca2", fontsize=26.349999999999998, label=Book, margin=0.31, shape=box, style="filled" ];
+	"app.Service:Pay" [ fillcolor="#f0bca2", fontsize=26.349999999999998, label=Pay, margin=0.31, shape=box, style="filled" ];
+	"app.Service:User" [ fillcolor="#f0bca2", fontsize=26.349999999999998, label=User, margin=0.31, shape=box, style="filled" ];
 
 }
 ;
@@ -78,14 +85,23 @@ digraph G {
 
 }
 ;
+	subgraph "cluster_database.Redis" {
+	fontsize=19;
+	label="/example/internal/database";
+	labelloc=t;
+	margin=19;
+	style=dashed;
+
+}
+;
 	subgraph "cluster_database.SqlStore" {
 	fontsize=19;
 	label="/example/internal/database";
 	labelloc=t;
 	margin=19;
 	style=dashed;
-	"database.SqlStore" [ fontsize=19, margin=0.19, shape=tab ];
-	"database.SqlStore:DB" [ fontsize=16.15, label=DB, margin=0.19, shape=box ];
+	"database.SqlStore" [ fillcolor="#b7d3ff", fontsize=19, margin=0.19, shape=tab, style="filled" ];
+	"database.SqlStore:DB" [ fillcolor="#f0bca2", fontsize=16.15, label=DB, margin=0.19, shape=box, style="filled" ];
 
 }
 ;
@@ -95,8 +111,8 @@ digraph G {
 	labelloc=t;
 	margin=19;
 	style=dashed;
-	"sdk.payClient" [ fontsize=19, margin=0.19, shape=tab ];
-	"sdk.payClient:Client" [ fontsize=16.15, label=Client, margin=0.19, shape=box ];
+	"sdk.payClient" [ fillcolor="#b7d3ff", fontsize=19, margin=0.19, shape=tab, style="filled" ];
+	"sdk.payClient:Client" [ fillcolor="#f0bca2", fontsize=16.15, label=Client, margin=0.19, shape=box, style="filled" ];
 
 }
 ;
@@ -106,9 +122,10 @@ digraph G {
 	labelloc=t;
 	margin=24;
 	style=dashed;
-	"svc_impls.Book" [ fontsize=24, margin=0.24, shape=tab ];
-	"svc_impls.Book:BookDao" [ fontsize=20.4, label=BookDao, margin=0.24, shape=box ];
-	"svc_impls.Book:DB" [ fontsize=20.4, label=DB, margin=0.24, shape=box ];
+	"svc_impls.Book" [ fillcolor="#b7d3ff", fontsize=24, margin=0.24, shape=tab, style="filled" ];
+	"svc_impls.Book:BookDao" [ fillcolor="#f0bca2", fontsize=20.4, label=BookDao, margin=0.24, shape=box, style="filled" ];
+	"svc_impls.Book:Cache" [ fillcolor="#f0bca2", fontsize=20.4, label=Cache, margin=0.24, shape=box, style="filled" ];
+	"svc_impls.Book:DB" [ fillcolor="#f0bca2", fontsize=20.4, label=DB, margin=0.24, shape=box, style="filled" ];
 
 }
 ;
@@ -118,8 +135,8 @@ digraph G {
 	labelloc=t;
 	margin=24;
 	style=dashed;
-	"svc_impls.Pay" [ fontsize=24, margin=0.24, shape=tab ];
-	"svc_impls.Pay:Client" [ fontsize=20.4, label=Client, margin=0.24, shape=box ];
+	"svc_impls.Pay" [ fillcolor="#b7d3ff", fontsize=24, margin=0.24, shape=tab, style="filled" ];
+	"svc_impls.Pay:Client" [ fillcolor="#f0bca2", fontsize=20.4, label=Client, margin=0.24, shape=box, style="filled" ];
 
 }
 ;
@@ -129,10 +146,10 @@ digraph G {
 	labelloc=t;
 	margin=24;
 	style=dashed;
-	"svc_impls.User" [ fontsize=24, margin=0.24, shape=tab ];
-	"svc_impls.User:DB" [ fontsize=20.4, label=DB, margin=0.24, shape=box ];
-	"svc_impls.User:PaySvc" [ fontsize=20.4, label=PaySvc, margin=0.24, shape=box ];
-	"svc_impls.User:UserDao" [ fontsize=20.4, label=UserDao, margin=0.24, shape=box ];
+	"svc_impls.User" [ fillcolor="#b7d3ff", fontsize=24, margin=0.24, shape=tab, style="filled" ];
+	"svc_impls.User:DB" [ fillcolor="#f0bca2", fontsize=20.4, label=DB, margin=0.24, shape=box, style="filled" ];
+	"svc_impls.User:PaySvc" [ fillcolor="#f0bca2", fontsize=20.4, label=PaySvc, margin=0.24, shape=box, style="filled" ];
+	"svc_impls.User:UserDao" [ fillcolor="#f0bca2", fontsize=20.4, label=UserDao, margin=0.24, shape=box, style="filled" ];
 
 }
 ;
@@ -142,23 +159,27 @@ digraph G {
 	labelloc=t;
 	margin=16;
 	style=dashed;
-	"utils.HttpClient" [ fontsize=16, margin=0.16, shape=tab ];
-	"utils.HttpClient:Client" [ fontsize=13.6, label=Client, margin=0.16, shape=box ];
+	"utils.HttpClient" [ fillcolor="#b7d3ff", fontsize=16, margin=0.16, shape=tab, style="filled" ];
+	"utils.HttpClient:Client" [ fillcolor="#f0bca2", fontsize=13.6, label=Client, margin=0.16, shape=box, style="filled" ];
 
 }
 ;
-	"dao.Book" [ fontsize=19, label="dao.Book", margin=0.19, shape=component ];
-	"dao.User" [ fontsize=19, label="dao.User", margin=0.16, shape=component ];
-	"dao_impls.bookDao" [ fontsize=19 ];
-	"dao_impls.userDao" [ fontsize=19 ];
-	"database.Store" [ fontsize=19, label="database.Store", margin=0.19, shape=component ];
-	"http.Client" [ fontsize=15 ];
-	"net.Listener" [ fontsize=31, label="net.Listener", margin=0.16, shape=component ];
-	"net.TCPListener" [ fontsize=31 ];
-	"sdk.Pay" [ fontsize=19, label="sdk.Pay", margin=0.19, shape=component ];
-	"sql.DB" [ fontsize=16 ];
-	"svc.IBook" [ fontsize=24, label="svc.IBook", margin=0.24, shape=component ];
-	"svc.IPay" [ fontsize=24, label="svc.IPay", margin=0.24, shape=component ];
-	"svc.IUser" [ fontsize=24, label="svc.IUser", margin=0.16, shape=component ];
+	"dao.Book" [ fillcolor="#f9e3b5", fontsize=19, label="dao.Book", margin=0.19, shape=component, style="filled" ];
+	"dao.User" [ fillcolor="#f9e3b5", fontsize=19, label="dao.User", margin=0.16, shape=component, style="filled" ];
+	"dao_impls.bookDao" [ fillcolor="#d4f9d1", fontsize=19, shape=note, style="filled" ];
+	"dao_impls.userDao" [ fillcolor="#d4f9d1", fontsize=19, shape=note, style="filled" ];
+	"database.Cache" [ fillcolor="#f9e3b5", fontsize=19, label="database.Cache", margin=0.19, shape=component, style="filled" ];
+	"database.Redis" [ fillcolor="#d4f9d1", fontsize=19, shape=note, style="filled" ];
+	"database.Store" [ fillcolor="#f9e3b5", fontsize=19, label="database.Store", margin=0.19, shape=component, style="filled" ];
+	"http.Client" [ fillcolor="#d4f9d1", fontsize=15, shape=note, style="filled" ];
+	"http.Handler" [ fillcolor="#f9e3b5", fontsize=31, label="http.Handler", margin=0.16, shape=component, style="filled" ];
+	"http.HandlerFunc" [ fillcolor="#d4f9d1", fontsize=31, shape=note, style="filled" ];
+	"net.Listener" [ fillcolor="#f9e3b5", fontsize=31, label="net.Listener", margin=0.16, shape=component, style="filled" ];
+	"net.TCPListener" [ fillcolor="#d4f9d1", fontsize=31, shape=note, style="filled" ];
+	"sdk.Pay" [ fillcolor="#f9e3b5", fontsize=19, label="sdk.Pay", margin=0.19, shape=component, style="filled" ];
+	"sql.DB" [ fillcolor="#d4f9d1", fontsize=16, shape=note, style="filled" ];
+	"svc.IBook" [ fillcolor="#f9e3b5", fontsize=24, label="svc.IBook", margin=0.24, shape=component, style="filled" ];
+	"svc.IPay" [ fillcolor="#f9e3b5", fontsize=24, label="svc.IPay", margin=0.24, shape=component, style="filled" ];
+	"svc.IUser" [ fillcolor="#f9e3b5", fontsize=24, label="svc.IUser", margin=0.16, shape=component, style="filled" ];
 
 }

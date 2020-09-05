@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
+	"net/http"
 	"os/exec"
 	"testing"
 
@@ -15,22 +16,19 @@ import (
 	"github.com/Just-maple/structgraph/example/internal/database"
 	"github.com/Just-maple/structgraph/example/internal/sdk"
 	"github.com/Just-maple/structgraph/example/internal/svc/svc_impls"
-	_ "github.com/go-sql-driver/mysql"
 )
 
-func MakeApplication() app.Application {
+func MakeApplication() *app.Application {
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		panic(err)
 	}
-	src := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", "root", "Aa123456", "0.0.0.0", 3306, "mysql")
-	sqlDB, err := sql.Open("mysql", src)
-	if err != nil {
-		panic(err)
-	}
-	db := &database.SqlStore{DB: sqlDB}
+	cache := &database.Redis{}
+	db := &database.SqlStore{DB: &sql.DB{}}
 	pay := &svc_impls.Pay{Client: sdk.NewPayClient()}
-	a := app.Application{
+	handler := http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {})
+	a := &app.Application{
+		Router: handler,
 		Server: listener,
 		Service: app.Service{
 			User: &svc_impls.User{
@@ -41,6 +39,7 @@ func MakeApplication() app.Application {
 			Book: &svc_impls.Book{
 				BookDao: dao_impls.NewBookDao(),
 				DB:      db,
+				Cache:   cache,
 			},
 			Pay: pay,
 		},
