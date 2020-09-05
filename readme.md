@@ -11,25 +11,30 @@
 
 ```go
 func MakeApplication() Application {
-	cn := Conn{}
-	d := &Service{
-		sql:   Mysql{cn: cn},
-		redis: Redis{},
+	listener, err := net.Listen("tcp", ":8080")
+	if err != nil {
+		panic(err)
 	}
-	s2 := &Service2{
-		sql:   Mysql{cn: cn},
-		redis: Redis{},
-		wxSdk: d,
+	src := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", "root", "Aa123456", "0.0.0.0", 3306, "mysql")
+	sqlDB, err := sql.Open("mysql", src)
+	if err != nil {
+		panic(err)
 	}
-	a := Application{
-		service:  d,
-		service2: s2,
-		service3: Service2{
-			redis: s2,
+	db := &database.SqlStore{DB: sqlDB}
+	a := app.Application{
+		Server: listener,
+		Service: app.Service{
+			User: &svc_impls.User{
+				UserDao: dao_impls.NewUserDao(),
+				DB:      db,
+			},
+			Book: &svc_impls.Book{
+				BookDao: dao_impls.NewBookDao(),
+				DB:      db,
+			},
+			Pay: &svc_impls.Pay{Client: sdk.NewPayClient()},
 		},
-		service4: Mysql{cn: cn},
 	}
-	d.redis = a
 	return a
 }
 

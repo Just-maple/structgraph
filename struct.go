@@ -57,22 +57,30 @@ func (d *drawer) addField(structName string, fieldName string, level int) {
 			map[string]string{
 				"fontsize": fmt.Sprintf("%v", size),
 				"margin":   fmt.Sprintf("%v", size*0.02),
+				"shape":    "tab",
 			})
 		d.addPNode(fmt.Sprintf(`"cluster_%s"`, structName), structName+":"+fieldName,
 			map[string]string{
 				"label":    fieldName,
-				"shape":    "box",
-				"fontsize": fmt.Sprintf("%v", size),
-				"margin":   fmt.Sprintf("%v", size*0.02),
+				"shape":    "signature",
+				"fontsize": fmt.Sprintf("%v", size*0.8),
+				//"margin":   fmt.Sprintf("%v", size*0.008),
 			})
 	})
 	d.addEdge(structName, structName+":"+fieldName, map[string]string{"arrowhead": "dot"})
 }
 
-func (d *drawer) addImpl(interfaceName string, implType string, level int) {
-	d.addNode(interfaceName, nil, level)
+func (d *drawer) addImpl(itf reflect.Type, implType string, level int) {
+	label := itf.String() + ":"
+	for i := 0; i < itf.NumMethod(); i++ {
+		m := itf.Method(i)
+		label += "\n" + m.Name + " : " + m.Type.String()
+	}
+	d.addNode(itf.String(), map[string]string{
+		"shape": "component",
+		"label": fmt.Sprintf(`"%s"`, label)}, level)
 	d.addNode(implType, nil, level)
-	d.addEdge(interfaceName, implType, map[string]string{"label": "impl", "style": "dashed"})
+	d.addEdge(itf.String(), implType, map[string]string{"label": "impl", "style": "dashed"})
 }
 
 func (d *drawer) addEdge(from string, to string, attrs map[string]string) {
@@ -132,12 +140,12 @@ func (d *drawer) draw(ctx context.Context, parent string, v reflect.Value, level
 	}
 
 	for v.Kind() == reflect.Interface {
-		itf := v.Type().String()
+		t := v.Type()
 		v = v.Elem()
 		for v.Kind() == reflect.Ptr {
 			v = v.Elem()
 		}
-		d.addImpl(itf, v.Type().String(), level)
+		d.addImpl(t, v.Type().String(), level)
 	}
 
 	d.addNode(
