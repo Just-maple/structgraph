@@ -4,7 +4,7 @@
 ## Mentions
 
 - [graphviz](http://www.graphviz.org)
-- [awalterschulze/gographviz](github.com/awalterschulze/gographviz)
+- [awalterschulze/gographviz](http://github.com/awalterschulze/gographviz)
 
 
 ## Usage example
