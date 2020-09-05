@@ -66,5 +66,5 @@ func genPng() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Printf("%s", out.String()) //输出执行结果
+	fmt.Printf("%s", out.String())
 }
