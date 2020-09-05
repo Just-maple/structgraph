@@ -1,66 +1,52 @@
 package example
 
 import (
+	"database/sql"
+	"fmt"
 	"io/ioutil"
+	"net"
 	"testing"
 
 	"github.com/Just-maple/structgraph"
+	"github.com/Just-maple/structgraph/example/internal/app"
+	"github.com/Just-maple/structgraph/example/internal/dao/dao_impls"
+	"github.com/Just-maple/structgraph/example/internal/database"
+	"github.com/Just-maple/structgraph/example/internal/sdk"
+	"github.com/Just-maple/structgraph/example/internal/svc/svc_impls"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-type Application struct {
-	service  IService
-	service4 IService
-	service2 *Service2
-	service3 Service2
-}
-type Service struct {
-	sql   IMysql
-	redis IRedis
-}
-type Service2 struct {
-	sql   IMysql
-	redis IRedis
-	wxSdk WxSdk
-}
-type Mysql struct {
-	cn Conn
-}
-
-type WxSdk interface {
-}
-
-type IService interface{}
-type Conn struct{}
-type IRedis interface{}
-type Redis struct{}
-type IMysql interface{}
-
-func MakeApplication() Application {
-	cn := Conn{}
-	d := &Service{
-		sql:   Mysql{cn: cn},
-		redis: Redis{},
+func MakeApplication() app.Application {
+	listener, err := net.Listen("tcp", ":8080")
+	if err != nil {
+		panic(err)
 	}
-	s2 := &Service2{
-		sql:   Mysql{cn: cn},
-		redis: Redis{},
-		wxSdk: d,
+	src := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", "root", "Aa123456", "0.0.0.0", 3306, "mysql")
+	sqlDB, err := sql.Open("mysql", src)
+	if err != nil {
+		panic(err)
 	}
-	a := Application{
-		service:  d,
-		service2: s2,
-		service3: Service2{
-			redis: s2,
+	db := &database.SqlStore{DB: sqlDB}
+	a := app.Application{
+		Server: listener,
+		Service: app.Service{
+			User: &svc_impls.User{
+				UserDao: dao_impls.NewUserDao(),
+				DB:      db,
+			},
+			Book: &svc_impls.Book{
+				BookDao: dao_impls.NewBookDao(),
+				DB:      db,
+			},
+			Pay: &svc_impls.Pay{Client: sdk.NewPayClient()},
 		},
-		service4: Mysql{cn: cn},
 	}
-	d.redis = a
 	return a
 }
 
 func TestDraw(t *testing.T) {
-	app := MakeApplication()
-	ret := structgraph.Draw(app)
+	a := MakeApplication()
+	ret := structgraph.Draw(a)
 	_ = ioutil.WriteFile("test.puml", []byte("@startuml\n"+ret+"@enduml"), 0775)
 	_ = ioutil.WriteFile("test.dot", []byte(ret), 0775)
 }

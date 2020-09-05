@@ -1,95 +1,173 @@
 @startuml
 digraph G {
-	"example.Application"->"example.Application:service"[ arrowhead=dot ];
-	"example.Application:service"->"example.IService";
-	"example.IService"->"example.Service"[ label=impl, style=dashed ];
-	"example.Service"->"example.Service:sql"[ arrowhead=dot ];
-	"example.Service:sql"->"example.IMysql";
-	"example.IMysql"->"example.Mysql"[ label=impl, style=dashed ];
-	"example.Mysql"->"example.Mysql:cn"[ arrowhead=dot ];
-	"example.Service"->"example.Service:redis"[ arrowhead=dot ];
-	"example.Service:redis"->"example.IRedis";
-	"example.IRedis"->"example.Application"[ label=impl, style=dashed ];
-	"example.Application"->"example.Application:service4"[ arrowhead=dot ];
-	"example.Application:service4"->"example.IService";
-	"example.IService"->"example.Mysql"[ label=impl, style=dashed ];
-	"example.Application"->"example.Application:service2"[ arrowhead=dot ];
-	"example.Application:service2"->"example.Service2";
-	"example.Service2"->"example.Service2:sql"[ arrowhead=dot ];
-	"example.Service2:sql"->"example.IMysql";
-	"example.Service2"->"example.Service2:redis"[ arrowhead=dot ];
-	"example.Service2:redis"->"example.IRedis";
-	"example.IRedis"->"example.Redis"[ label=impl, style=dashed ];
-	"example.Service2"->"example.Service2:wxSdk"[ arrowhead=dot ];
-	"example.Service2:wxSdk"->"example.WxSdk";
-	"example.WxSdk"->"example.Service"[ label=impl, style=dashed ];
-	"example.Application"->"example.Application:service3"[ arrowhead=dot ];
-	"example.Application:service3"->"example.Service2";
-	"example.IRedis"->"example.Service2"[ label=impl, style=dashed ];
-	subgraph "cluster_example.Application" {
+	"app.Application"->"app.Application:Server"[ arrowhead=dot ];
+	"app.Application:Server"->"net.Listener";
+	"net.Listener"->"net.TCPListener"[ label=impl, style=dashed ];
+	"app.Application"->"app.Application:Service"[ arrowhead=dot ];
+	"app.Application:Service"->"app.Service";
+	"app.Service"->"app.Service:User"[ arrowhead=dot ];
+	"app.Service:User"->"svc.IUser";
+	"svc.IUser"->"svc_impls.User"[ label=impl, style=dashed ];
+	"svc_impls.User"->"svc_impls.User:UserDao"[ arrowhead=dot ];
+	"svc_impls.User:UserDao"->"dao.User";
+	"dao.User"->"dao_impls.userDao"[ label=impl, style=dashed ];
+	"svc_impls.User"->"svc_impls.User:DB"[ arrowhead=dot ];
+	"svc_impls.User:DB"->"database.Store";
+	"database.Store"->"database.SqlStore"[ label=impl, style=dashed ];
+	"database.SqlStore"->"database.SqlStore:DB"[ arrowhead=dot ];
+	"database.SqlStore:DB"->"sql.DB";
+	"app.Service"->"app.Service:Book"[ arrowhead=dot ];
+	"app.Service:Book"->"svc.IBook";
+	"svc.IBook"->"svc_impls.Book"[ label=impl, style=dashed ];
+	"svc_impls.Book"->"svc_impls.Book:DB"[ arrowhead=dot ];
+	"svc_impls.Book:DB"->"database.Store";
+	"svc_impls.Book"->"svc_impls.Book:BookDao"[ arrowhead=dot ];
+	"svc_impls.Book:BookDao"->"dao.Book";
+	"dao.Book"->"dao_impls.bookDao"[ label=impl, style=dashed ];
+	"app.Service"->"app.Service:Pay"[ arrowhead=dot ];
+	"app.Service:Pay"->"svc.IPay";
+	"svc.IPay"->"svc_impls.Pay"[ label=impl, style=dashed ];
+	"svc_impls.Pay"->"svc_impls.Pay:Client"[ arrowhead=dot ];
+	"svc_impls.Pay:Client"->"sdk.Pay";
+	"sdk.Pay"->"sdk.payClient"[ label=impl, style=dashed ];
+	"sdk.payClient"->"sdk.payClient:Client"[ arrowhead=dot ];
+	"sdk.payClient:Client"->"utils.HttpClient";
+	"utils.HttpClient"->"utils.HttpClient:Client"[ arrowhead=dot ];
+	"utils.HttpClient:Client"->"http.Client";
+	subgraph "cluster_app.Application" {
+	fontsize=31;
+	label="/example/internal/app";
+	labelloc=t;
+	margin=31;
+	style=dashed;
+	"app.Application" [ fontsize=31, margin=0.62, shape=tab ];
+	"app.Application:Server" [ fontsize=24.8, label=Server, shape=signature ];
+	"app.Application:Service" [ fontsize=24.8, label=Service, shape=signature ];
+
+}
+;
+	subgraph "cluster_app.Service" {
+	fontsize=24;
+	label="/example/internal/app";
+	labelloc=t;
+	margin=24;
+	style=dashed;
+	"app.Service" [ fontsize=24, margin=0.48, shape=tab ];
+	"app.Service:Book" [ fontsize=19.200000000000003, label=Book, shape=signature ];
+	"app.Service:Pay" [ fontsize=19.200000000000003, label=Pay, shape=signature ];
+	"app.Service:User" [ fontsize=19.200000000000003, label=User, shape=signature ];
+
+}
+;
+	subgraph "cluster_dao_impls.bookDao" {
+	fontsize=16;
+	label="/example/internal/dao/dao_impls";
+	labelloc=t;
+	margin=16;
+	style=dashed;
+
+}
+;
+	subgraph "cluster_dao_impls.userDao" {
+	fontsize=16;
+	label="/example/internal/dao/dao_impls";
+	labelloc=t;
+	margin=16;
+	style=dashed;
+
+}
+;
+	subgraph "cluster_database.SqlStore" {
+	fontsize=16;
+	label="/example/internal/database";
+	labelloc=t;
+	margin=16;
+	style=dashed;
+	"database.SqlStore" [ fontsize=16, margin=0.32, shape=tab ];
+	"database.SqlStore:DB" [ fontsize=12.8, label=DB, shape=signature ];
+
+}
+;
+	subgraph "cluster_sdk.payClient" {
+	fontsize=16;
+	label="/example/internal/sdk";
+	labelloc=t;
+	margin=16;
+	style=dashed;
+	"sdk.payClient" [ fontsize=16, margin=0.32, shape=tab ];
+	"sdk.payClient:Client" [ fontsize=12.8, label=Client, shape=signature ];
+
+}
+;
+	subgraph "cluster_svc_impls.Book" {
 	fontsize=19;
-	label="/example";
+	label="/example/internal/svc/svc_impls";
 	labelloc=t;
 	margin=19;
 	style=dashed;
-	"example.Application" [ fontsize=19, margin=0.38 ];
-	"example.Application:service" [ fontsize=19, label=service, margin=0.38, shape=box ];
-	"example.Application:service2" [ fontsize=19, label=service2, margin=0.38, shape=box ];
-	"example.Application:service3" [ fontsize=19, label=service3, margin=0.38, shape=box ];
-	"example.Application:service4" [ fontsize=19, label=service4, margin=0.38, shape=box ];
+	"svc_impls.Book" [ fontsize=19, margin=0.38, shape=tab ];
+	"svc_impls.Book:BookDao" [ fontsize=15.200000000000001, label=BookDao, shape=signature ];
+	"svc_impls.Book:DB" [ fontsize=15.200000000000001, label=DB, shape=signature ];
 
 }
 ;
-	subgraph "cluster_example.Mysql" {
-	fontsize=16;
-	label="/example";
+	subgraph "cluster_svc_impls.Pay" {
+	fontsize=19;
+	label="/example/internal/svc/svc_impls";
 	labelloc=t;
-	margin=16;
+	margin=19;
 	style=dashed;
-	"example.Mysql" [ fontsize=16, margin=0.32 ];
-	"example.Mysql:cn" [ fontsize=16, label=cn, margin=0.32, shape=box ];
+	"svc_impls.Pay" [ fontsize=19, margin=0.38, shape=tab ];
+	"svc_impls.Pay:Client" [ fontsize=15.200000000000001, label=Client, shape=signature ];
 
 }
 ;
-	subgraph "cluster_example.Redis" {
-	fontsize=16;
-	label="/example";
+	subgraph "cluster_svc_impls.User" {
+	fontsize=19;
+	label="/example/internal/svc/svc_impls";
 	labelloc=t;
-	margin=16;
+	margin=19;
 	style=dashed;
+	"svc_impls.User" [ fontsize=19, margin=0.38, shape=tab ];
+	"svc_impls.User:DB" [ fontsize=15.200000000000001, label=DB, shape=signature ];
+	"svc_impls.User:UserDao" [ fontsize=15.200000000000001, label=UserDao, shape=signature ];
 
 }
 ;
-	subgraph "cluster_example.Service" {
-	fontsize=16;
-	label="/example";
-	labelloc=t;
-	margin=16;
-	style=dashed;
-	"example.Service" [ fontsize=16, margin=0.32 ];
-	"example.Service:redis" [ fontsize=16, label=redis, margin=0.32, shape=box ];
-	"example.Service:sql" [ fontsize=16, label=sql, margin=0.32, shape=box ];
-
-}
-;
-	subgraph "cluster_example.Service2" {
+	subgraph "cluster_utils.HttpClient" {
 	fontsize=15;
-	label="/example";
+	label="/example/internal/utils";
 	labelloc=t;
 	margin=15;
 	style=dashed;
-	"example.Service2" [ fontsize=40, margin=0.8 ];
-	"example.Service2:redis" [ fontsize=15, label=redis, margin=0.3, shape=box ];
-	"example.Service2:sql" [ fontsize=15, label=sql, margin=0.3, shape=box ];
-	"example.Service2:wxSdk" [ fontsize=40, label=wxSdk, margin=0.8, shape=box ];
+	"utils.HttpClient" [ fontsize=15, margin=0.3, shape=tab ];
+	"utils.HttpClient:Client" [ fontsize=12, label=Client, shape=signature ];
 
 }
 ;
-	"example.IMysql" [ fontsize=16 ];
-	"example.IRedis" [ fontsize=16 ];
-	"example.IService" [ fontsize=16 ];
-	"example.Redis" [ fontsize=16 ];
-	"example.WxSdk" [ fontsize=24 ];
+	"dao.Book" [ fontsize=16, label="dao.Book:
+GetBookByID : func()", shape=component ];
+	"dao.User" [ fontsize=16, label="dao.User:
+GetUserByID : func()", shape=component ];
+	"dao_impls.bookDao" [ fontsize=16 ];
+	"dao_impls.userDao" [ fontsize=16 ];
+	"database.Store" [ fontsize=16, label="database.Store:
+GetDB : func() *sql.DB", shape=component ];
+	"http.Client" [ fontsize=16 ];
+	"net.Listener" [ fontsize=24, label="net.Listener:
+Accept : func() (net.Conn, error)
+Addr : func() net.Addr
+Close : func() error", shape=component ];
+	"net.TCPListener" [ fontsize=24 ];
+	"sdk.Pay" [ fontsize=16, label="sdk.Pay:
+Pay : func(context.Context)", shape=component ];
+	"sql.DB" [ fontsize=15 ];
+	"svc.IBook" [ fontsize=19, label="svc.IBook:
+GetBook : func()", shape=component ];
+	"svc.IPay" [ fontsize=19, label="svc.IPay:
+Pay : func()", shape=component ];
+	"svc.IUser" [ fontsize=19, label="svc.IUser:
+GetUser : func()", shape=component ];
 
 }
 @enduml
