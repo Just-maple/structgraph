@@ -6,8 +6,12 @@
 - [graphviz](http://www.graphviz.org)
 - [awalterschulze/gographviz](http://github.com/awalterschulze/gographviz)
 
+## Usage 
 
-## Usage example
+`import github.com/Just-maple/structgraph`
+
+
+## Example
 
 ```go
 func MakeApplication() Application {
