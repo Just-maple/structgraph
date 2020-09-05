@@ -8,7 +8,7 @@
 
 ## Usage 
 
-`import github.com/Just-maple/structgraph`
+`import "github.com/Just-maple/structgraph"`
 
 
 ## Example
@@ -53,3 +53,7 @@ draw ret with graphviz `dot`
 
 
 ![dot](example/test.png)
+
+
+### This is another example with a go-micro server
+![micro](example/micro-server.png)

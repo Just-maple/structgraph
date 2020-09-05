@@ -59,7 +59,8 @@ func Draw(in interface{}, opts ...Option) string {
 func (d *drawer) addField(structName string, fieldName string, level int) {
 	d.fn = append(d.fn, func() {
 		size := d.getSize(level)
-		d.addPNode(fmt.Sprintf(`"cluster_%s"`, structName), structName,
+		graphName := fmt.Sprintf(`"cluster_%s"`, structName)
+		d.addPNode(graphName, structName,
 			map[string]string{
 				"fontsize":  fmt.Sprintf("%v", size),
 				"margin":    fmt.Sprintf("%v", size*0.01),
@@ -67,9 +68,9 @@ func (d *drawer) addField(structName string, fieldName string, level int) {
 				"style":     `"filled"`,
 				"fillcolor": `"#b7d3ff"`,
 			})
-		d.addPNode(fmt.Sprintf(`"cluster_%s"`, structName), structName+":"+fieldName,
+		d.addPNode(graphName, structName+":"+fieldName,
 			map[string]string{
-				"label":     fieldName,
+				"label":     fmt.Sprintf(`"%v"`, fieldName),
 				"shape":     "box",
 				"style":     `"filled"`,
 				"fillcolor": `"#f0bca2"`,
@@ -125,7 +126,7 @@ func (d *drawer) addNode(nodeName string, attrs map[string]string, level int) {
 }
 
 func (d *drawer) getSize(level int) float64 {
-	return math.Pow(float64(d.depth-level), 2) + 15
+	return math.Pow(float64(d.depth-level), 2) + 25
 }
 
 func (d *drawer) addPNode(parent string, nodeName string, attrs map[string]string) {
@@ -142,11 +143,12 @@ func (d *drawer) addSubGraph(nodeName, pkg string, level int) {
 		_ = d.graph.AddSubGraph(d.main,
 			fmt.Sprintf(`"cluster_%s"`, nodeName),
 			map[string]string{
-				"label":    fmt.Sprintf(`"%s"`, pkg),
-				"fontsize": fmt.Sprintf(`%v`, size),
-				"style":    "dashed",
-				"margin":   fmt.Sprintf(`%v`, size),
-				"labelloc": "t",
+				"label":     fmt.Sprintf(`"%s"`, pkg),
+				"fontsize":  fmt.Sprintf(`%v`, size),
+				"style":     `"dashed,filled"`,
+				"margin":    fmt.Sprintf(`%v`, size),
+				"labelloc":  "t",
+				"fillcolor": `"#fff7f0"`,
 			})
 	})
 }
@@ -195,10 +197,6 @@ func (d *drawer) draw(ctx context.Context, parent string, v reflect.Value, level
 	d.addSubGraph(v.Type().String(), v.Type().PkgPath(), level)
 
 	for i := 0; i < v.NumField(); i++ {
-		fieldName := v.Type().Field(i).Name
-
-		d.addField(v.Type().String(), fieldName, level)
-
 		if v.Field(i).IsZero() {
 			continue
 		}
@@ -209,8 +207,13 @@ func (d *drawer) draw(ctx context.Context, parent string, v reflect.Value, level
 			tmp = tmp.Elem()
 		}
 
+		fieldName := v.Type().Field(i).Name
+
 		if tmp.Kind() != reflect.Interface && tmp.Kind() != reflect.Struct {
+			d.addField(v.Type().String(), fieldName+" ("+tmp.Type().String()+")", level)
 			continue
+		} else {
+			d.addField(v.Type().String(), fieldName, level)
 		}
 
 		next := v.Type().String() + ":" + fieldName
