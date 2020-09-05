@@ -5,3 +5,9 @@ func WithScope(path ...string) Option {
 		d.scopes = append(d.scopes, path...)
 	}
 }
+
+func WithItfMethod() Option {
+	return func(d *drawer) {
+		d.showItfMethod = true
+	}
+}

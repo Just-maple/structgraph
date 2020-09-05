@@ -15,10 +15,11 @@ type (
 	Option func(d *drawer)
 
 	drawer struct {
-		graph     *gographviz.Graph
-		scopes    []string
-		depth     int
-		edgeStore map[string]bool
+		graph         *gographviz.Graph
+		scopes        []string
+		depth         int
+		edgeStore     map[string]bool
+		showItfMethod bool
 
 		fn []func()
 	}
@@ -56,29 +57,34 @@ func (d *drawer) addField(structName string, fieldName string, level int) {
 		d.addPNode(fmt.Sprintf(`"cluster_%s"`, structName), structName,
 			map[string]string{
 				"fontsize": fmt.Sprintf("%v", size),
-				"margin":   fmt.Sprintf("%v", size*0.02),
+				"margin":   fmt.Sprintf("%v", size*0.01),
 				"shape":    "tab",
 			})
 		d.addPNode(fmt.Sprintf(`"cluster_%s"`, structName), structName+":"+fieldName,
 			map[string]string{
 				"label":    fieldName,
-				"shape":    "signature",
-				"fontsize": fmt.Sprintf("%v", size*0.8),
-				//"margin":   fmt.Sprintf("%v", size*0.008),
+				"shape":    "box",
+				"fontsize": fmt.Sprintf("%v", size*0.85),
+				"margin":   fmt.Sprintf("%v", size*0.01),
 			})
 	})
 	d.addEdge(structName, structName+":"+fieldName, map[string]string{"arrowhead": "dot"})
 }
 
 func (d *drawer) addImpl(itf reflect.Type, implType string, level int) {
-	label := itf.String() + ":"
-	for i := 0; i < itf.NumMethod(); i++ {
-		m := itf.Method(i)
-		label += "\n" + m.Name + " : " + m.Type.String()
+	size := d.getSize(level)
+	label := itf.String()
+	if d.showItfMethod {
+		label += ":"
+		for i := 0; i < itf.NumMethod(); i++ {
+			m := itf.Method(i)
+			label += "\n" + m.Name + " : " + m.Type.String()
+		}
 	}
 	d.addNode(itf.String(), map[string]string{
-		"shape": "component",
-		"label": fmt.Sprintf(`"%s"`, label)}, level)
+		"shape":  "component",
+		"margin": fmt.Sprintf("%v", size*0.01),
+		"label":  fmt.Sprintf(`"%s"`, label)}, level)
 	d.addNode(implType, nil, level)
 	d.addEdge(itf.String(), implType, map[string]string{"label": "impl", "style": "dashed"})
 }

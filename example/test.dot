@@ -15,6 +15,16 @@ digraph G {
 	"database.Store"->"database.SqlStore"[ label=impl, style=dashed ];
 	"database.SqlStore"->"database.SqlStore:DB"[ arrowhead=dot ];
 	"database.SqlStore:DB"->"sql.DB";
+	"svc_impls.User"->"svc_impls.User:PaySvc"[ arrowhead=dot ];
+	"svc_impls.User:PaySvc"->"svc.IPay";
+	"svc.IPay"->"svc_impls.Pay"[ label=impl, style=dashed ];
+	"svc_impls.Pay"->"svc_impls.Pay:Client"[ arrowhead=dot ];
+	"svc_impls.Pay:Client"->"sdk.Pay";
+	"sdk.Pay"->"sdk.payClient"[ label=impl, style=dashed ];
+	"sdk.payClient"->"sdk.payClient:Client"[ arrowhead=dot ];
+	"sdk.payClient:Client"->"utils.HttpClient";
+	"utils.HttpClient"->"utils.HttpClient:Client"[ arrowhead=dot ];
+	"utils.HttpClient:Client"->"http.Client";
 	"app.Service"->"app.Service:Book"[ arrowhead=dot ];
 	"app.Service:Book"->"svc.IBook";
 	"svc.IBook"->"svc_impls.Book"[ label=impl, style=dashed ];
@@ -25,147 +35,130 @@ digraph G {
 	"dao.Book"->"dao_impls.bookDao"[ label=impl, style=dashed ];
 	"app.Service"->"app.Service:Pay"[ arrowhead=dot ];
 	"app.Service:Pay"->"svc.IPay";
-	"svc.IPay"->"svc_impls.Pay"[ label=impl, style=dashed ];
-	"svc_impls.Pay"->"svc_impls.Pay:Client"[ arrowhead=dot ];
-	"svc_impls.Pay:Client"->"sdk.Pay";
-	"sdk.Pay"->"sdk.payClient"[ label=impl, style=dashed ];
-	"sdk.payClient"->"sdk.payClient:Client"[ arrowhead=dot ];
-	"sdk.payClient:Client"->"utils.HttpClient";
-	"utils.HttpClient"->"utils.HttpClient:Client"[ arrowhead=dot ];
-	"utils.HttpClient:Client"->"http.Client";
 	subgraph "cluster_app.Application" {
+	fontsize=40;
+	label="/example/internal/app";
+	labelloc=t;
+	margin=40;
+	style=dashed;
+	"app.Application" [ fontsize=40, margin=0.4, shape=tab ];
+	"app.Application:Server" [ fontsize=34, label=Server, margin=0.4, shape=box ];
+	"app.Application:Service" [ fontsize=34, label=Service, margin=0.4, shape=box ];
+
+}
+;
+	subgraph "cluster_app.Service" {
 	fontsize=31;
 	label="/example/internal/app";
 	labelloc=t;
 	margin=31;
 	style=dashed;
-	"app.Application" [ fontsize=31, margin=0.62, shape=tab ];
-	"app.Application:Server" [ fontsize=24.8, label=Server, shape=signature ];
-	"app.Application:Service" [ fontsize=24.8, label=Service, shape=signature ];
-
-}
-;
-	subgraph "cluster_app.Service" {
-	fontsize=24;
-	label="/example/internal/app";
-	labelloc=t;
-	margin=24;
-	style=dashed;
-	"app.Service" [ fontsize=24, margin=0.48, shape=tab ];
-	"app.Service:Book" [ fontsize=19.200000000000003, label=Book, shape=signature ];
-	"app.Service:Pay" [ fontsize=19.200000000000003, label=Pay, shape=signature ];
-	"app.Service:User" [ fontsize=19.200000000000003, label=User, shape=signature ];
+	"app.Service" [ fontsize=31, margin=0.31, shape=tab ];
+	"app.Service:Book" [ fontsize=26.349999999999998, label=Book, margin=0.31, shape=box ];
+	"app.Service:Pay" [ fontsize=26.349999999999998, label=Pay, margin=0.31, shape=box ];
+	"app.Service:User" [ fontsize=26.349999999999998, label=User, margin=0.31, shape=box ];
 
 }
 ;
 	subgraph "cluster_dao_impls.bookDao" {
-	fontsize=16;
+	fontsize=19;
 	label="/example/internal/dao/dao_impls";
 	labelloc=t;
-	margin=16;
+	margin=19;
 	style=dashed;
 
 }
 ;
 	subgraph "cluster_dao_impls.userDao" {
-	fontsize=16;
+	fontsize=19;
 	label="/example/internal/dao/dao_impls";
 	labelloc=t;
-	margin=16;
+	margin=19;
 	style=dashed;
 
 }
 ;
 	subgraph "cluster_database.SqlStore" {
-	fontsize=16;
+	fontsize=19;
 	label="/example/internal/database";
 	labelloc=t;
-	margin=16;
+	margin=19;
 	style=dashed;
-	"database.SqlStore" [ fontsize=16, margin=0.32, shape=tab ];
-	"database.SqlStore:DB" [ fontsize=12.8, label=DB, shape=signature ];
+	"database.SqlStore" [ fontsize=19, margin=0.19, shape=tab ];
+	"database.SqlStore:DB" [ fontsize=16.15, label=DB, margin=0.19, shape=box ];
 
 }
 ;
 	subgraph "cluster_sdk.payClient" {
-	fontsize=16;
+	fontsize=19;
 	label="/example/internal/sdk";
 	labelloc=t;
-	margin=16;
+	margin=19;
 	style=dashed;
-	"sdk.payClient" [ fontsize=16, margin=0.32, shape=tab ];
-	"sdk.payClient:Client" [ fontsize=12.8, label=Client, shape=signature ];
+	"sdk.payClient" [ fontsize=19, margin=0.19, shape=tab ];
+	"sdk.payClient:Client" [ fontsize=16.15, label=Client, margin=0.19, shape=box ];
 
 }
 ;
 	subgraph "cluster_svc_impls.Book" {
-	fontsize=19;
+	fontsize=24;
 	label="/example/internal/svc/svc_impls";
 	labelloc=t;
-	margin=19;
+	margin=24;
 	style=dashed;
-	"svc_impls.Book" [ fontsize=19, margin=0.38, shape=tab ];
-	"svc_impls.Book:BookDao" [ fontsize=15.200000000000001, label=BookDao, shape=signature ];
-	"svc_impls.Book:DB" [ fontsize=15.200000000000001, label=DB, shape=signature ];
+	"svc_impls.Book" [ fontsize=24, margin=0.24, shape=tab ];
+	"svc_impls.Book:BookDao" [ fontsize=20.4, label=BookDao, margin=0.24, shape=box ];
+	"svc_impls.Book:DB" [ fontsize=20.4, label=DB, margin=0.24, shape=box ];
 
 }
 ;
 	subgraph "cluster_svc_impls.Pay" {
-	fontsize=19;
+	fontsize=24;
 	label="/example/internal/svc/svc_impls";
 	labelloc=t;
-	margin=19;
+	margin=24;
 	style=dashed;
-	"svc_impls.Pay" [ fontsize=19, margin=0.38, shape=tab ];
-	"svc_impls.Pay:Client" [ fontsize=15.200000000000001, label=Client, shape=signature ];
+	"svc_impls.Pay" [ fontsize=24, margin=0.24, shape=tab ];
+	"svc_impls.Pay:Client" [ fontsize=20.4, label=Client, margin=0.24, shape=box ];
 
 }
 ;
 	subgraph "cluster_svc_impls.User" {
-	fontsize=19;
+	fontsize=24;
 	label="/example/internal/svc/svc_impls";
 	labelloc=t;
-	margin=19;
+	margin=24;
 	style=dashed;
-	"svc_impls.User" [ fontsize=19, margin=0.38, shape=tab ];
-	"svc_impls.User:DB" [ fontsize=15.200000000000001, label=DB, shape=signature ];
-	"svc_impls.User:UserDao" [ fontsize=15.200000000000001, label=UserDao, shape=signature ];
+	"svc_impls.User" [ fontsize=24, margin=0.24, shape=tab ];
+	"svc_impls.User:DB" [ fontsize=20.4, label=DB, margin=0.24, shape=box ];
+	"svc_impls.User:PaySvc" [ fontsize=20.4, label=PaySvc, margin=0.24, shape=box ];
+	"svc_impls.User:UserDao" [ fontsize=20.4, label=UserDao, margin=0.24, shape=box ];
 
 }
 ;
 	subgraph "cluster_utils.HttpClient" {
-	fontsize=15;
+	fontsize=16;
 	label="/example/internal/utils";
 	labelloc=t;
-	margin=15;
+	margin=16;
 	style=dashed;
-	"utils.HttpClient" [ fontsize=15, margin=0.3, shape=tab ];
-	"utils.HttpClient:Client" [ fontsize=12, label=Client, shape=signature ];
+	"utils.HttpClient" [ fontsize=16, margin=0.16, shape=tab ];
+	"utils.HttpClient:Client" [ fontsize=13.6, label=Client, margin=0.16, shape=box ];
 
 }
 ;
-	"dao.Book" [ fontsize=16, label="dao.Book:
-GetBookByID : func()", shape=component ];
-	"dao.User" [ fontsize=16, label="dao.User:
-GetUserByID : func()", shape=component ];
-	"dao_impls.bookDao" [ fontsize=16 ];
-	"dao_impls.userDao" [ fontsize=16 ];
-	"database.Store" [ fontsize=16, label="database.Store:
-GetDB : func() *sql.DB", shape=component ];
-	"http.Client" [ fontsize=16 ];
-	"net.Listener" [ fontsize=24, label="net.Listener:
-Accept : func() (net.Conn, error)
-Addr : func() net.Addr
-Close : func() error", shape=component ];
-	"net.TCPListener" [ fontsize=24 ];
-	"sdk.Pay" [ fontsize=16, label="sdk.Pay:
-Pay : func(context.Context)", shape=component ];
-	"sql.DB" [ fontsize=15 ];
-	"svc.IBook" [ fontsize=19, label="svc.IBook:
-GetBook : func()", shape=component ];
-	"svc.IPay" [ fontsize=19, label="svc.IPay:
-Pay : func()", shape=component ];
-	"svc.IUser" [ fontsize=19, label="svc.IUser:
-GetUser : func()", shape=component ];
+	"dao.Book" [ fontsize=19, label="dao.Book", margin=0.19, shape=component ];
+	"dao.User" [ fontsize=19, label="dao.User", margin=0.16, shape=component ];
+	"dao_impls.bookDao" [ fontsize=19 ];
+	"dao_impls.userDao" [ fontsize=19 ];
+	"database.Store" [ fontsize=19, label="database.Store", margin=0.19, shape=component ];
+	"http.Client" [ fontsize=15 ];
+	"net.Listener" [ fontsize=31, label="net.Listener", margin=0.16, shape=component ];
+	"net.TCPListener" [ fontsize=31 ];
+	"sdk.Pay" [ fontsize=19, label="sdk.Pay", margin=0.19, shape=component ];
+	"sql.DB" [ fontsize=16 ];
+	"svc.IBook" [ fontsize=24, label="svc.IBook", margin=0.24, shape=component ];
+	"svc.IPay" [ fontsize=24, label="svc.IPay", margin=0.24, shape=component ];
+	"svc.IUser" [ fontsize=24, label="svc.IUser", margin=0.16, shape=component ];
 
 }
