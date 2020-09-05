@@ -1,0 +1,93 @@
+digraph G {
+	"example.Application"->"example.Application:service"[ arrowhead=dot ];
+	"example.Application:service"->"example.IService";
+	"example.IService"->"example.Service"[ label=impl, style=dashed ];
+	"example.Service"->"example.Service:sql"[ arrowhead=dot ];
+	"example.Service:sql"->"example.IMysql";
+	"example.IMysql"->"example.Mysql"[ label=impl, style=dashed ];
+	"example.Mysql"->"example.Mysql:cn"[ arrowhead=dot ];
+	"example.Service"->"example.Service:redis"[ arrowhead=dot ];
+	"example.Service:redis"->"example.IRedis";
+	"example.IRedis"->"example.Application"[ label=impl, style=dashed ];
+	"example.Application"->"example.Application:service4"[ arrowhead=dot ];
+	"example.Application:service4"->"example.IService";
+	"example.IService"->"example.Mysql"[ label=impl, style=dashed ];
+	"example.Application"->"example.Application:service2"[ arrowhead=dot ];
+	"example.Application:service2"->"example.Service2";
+	"example.Service2"->"example.Service2:sql"[ arrowhead=dot ];
+	"example.Service2:sql"->"example.IMysql";
+	"example.Service2"->"example.Service2:redis"[ arrowhead=dot ];
+	"example.Service2:redis"->"example.IRedis";
+	"example.IRedis"->"example.Redis"[ label=impl, style=dashed ];
+	"example.Service2"->"example.Service2:wxSdk"[ arrowhead=dot ];
+	"example.Service2:wxSdk"->"example.WxSdk";
+	"example.WxSdk"->"example.Service"[ label=impl, style=dashed ];
+	"example.Application"->"example.Application:service3"[ arrowhead=dot ];
+	"example.Application:service3"->"example.Service2";
+	"example.IRedis"->"example.Service2"[ label=impl, style=dashed ];
+	subgraph "cluster_example.Application" {
+	fontsize=19;
+	label="/example";
+	labelloc=t;
+	margin=19;
+	style=dashed;
+	"example.Application" [ fontsize=19, margin=0.38 ];
+	"example.Application:service" [ fontsize=19, label=service, margin=0.38, shape=box ];
+	"example.Application:service2" [ fontsize=19, label=service2, margin=0.38, shape=box ];
+	"example.Application:service3" [ fontsize=19, label=service3, margin=0.38, shape=box ];
+	"example.Application:service4" [ fontsize=19, label=service4, margin=0.38, shape=box ];
+
+}
+;
+	subgraph "cluster_example.Mysql" {
+	fontsize=16;
+	label="/example";
+	labelloc=t;
+	margin=16;
+	style=dashed;
+	"example.Mysql" [ fontsize=16, margin=0.32 ];
+	"example.Mysql:cn" [ fontsize=16, label=cn, margin=0.32, shape=box ];
+
+}
+;
+	subgraph "cluster_example.Redis" {
+	fontsize=16;
+	label="/example";
+	labelloc=t;
+	margin=16;
+	style=dashed;
+
+}
+;
+	subgraph "cluster_example.Service" {
+	fontsize=16;
+	label="/example";
+	labelloc=t;
+	margin=16;
+	style=dashed;
+	"example.Service" [ fontsize=16, margin=0.32 ];
+	"example.Service:redis" [ fontsize=16, label=redis, margin=0.32, shape=box ];
+	"example.Service:sql" [ fontsize=16, label=sql, margin=0.32, shape=box ];
+
+}
+;
+	subgraph "cluster_example.Service2" {
+	fontsize=15;
+	label="/example";
+	labelloc=t;
+	margin=15;
+	style=dashed;
+	"example.Service2" [ fontsize=40, margin=0.8 ];
+	"example.Service2:redis" [ fontsize=15, label=redis, margin=0.3, shape=box ];
+	"example.Service2:sql" [ fontsize=15, label=sql, margin=0.3, shape=box ];
+	"example.Service2:wxSdk" [ fontsize=40, label=wxSdk, margin=0.8, shape=box ];
+
+}
+;
+	"example.IMysql" [ fontsize=16 ];
+	"example.IRedis" [ fontsize=16 ];
+	"example.IService" [ fontsize=16 ];
+	"example.Redis" [ fontsize=16 ];
+	"example.WxSdk" [ fontsize=24 ];
+
+}
