@@ -55,10 +55,13 @@ func TestDraw(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	genPng()
+	err = structgraph.GenPngFromApi(ret, "test.png")
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
-func genPng() {
+func genPngByDot() {
 	cmd := exec.Command(`/bin/sh`, `-c`, "dot test.dot -T png -o test.png")
 	var out bytes.Buffer
 	cmd.Stdout = &out

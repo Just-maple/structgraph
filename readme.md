@@ -51,9 +51,16 @@ func Draw() {
 
 draw ret with graphviz `dot`
 
+or use `googleapi`
 
-![dot](example/test.png)
+```go
+structgraph.GenPngFromApi(ret, "test.png")
+```
 
 
-### This is another example with a go-micro server
+![png](example/test.png)
+
+
+This is another example with a go-micro server
+
 ![micro](example/micro-server.png)
