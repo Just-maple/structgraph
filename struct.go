@@ -184,7 +184,7 @@ func (d *drawer) draw(ctx context.Context, parent string, v reflect.Value, level
 	if len(d.scopes) > 0 {
 		var inScope bool
 		for _, s := range d.scopes {
-			if strings.Contains(v.Type().PkgPath(), s) {
+			if strings.HasPrefix(v.Type().PkgPath(), s) {
 				inScope = true
 				break
 			}

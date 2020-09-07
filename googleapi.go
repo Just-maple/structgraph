@@ -7,10 +7,13 @@ import (
 	"net/url"
 )
 
-const apiurl = "https://chart.googleapis.com/chart?cht=gv&chl="
+const apiurl = "https://chart.googleapis.com/chart"
 
 func GenPngFromApi(str, filename string) (err error) {
-	resp, err := http.Get(apiurl + url.QueryEscape(str))
+	u := url.Values{}
+	u.Add("cht", "gv")
+	u.Add("chl", str)
+	resp, err := http.PostForm(apiurl, u)
 	if err != nil {
 		return
 	}
