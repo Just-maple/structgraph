@@ -207,7 +207,13 @@ func (d *drawer) draw(ctx context.Context, parent string, v reflect.Value, level
 			tmp = tmp.Elem()
 		}
 
-		fieldName := v.Type().Field(i).Name
+		field := v.Type().Field(i)
+
+		if field.Tag.Get("structgraph") == "-" {
+			continue
+		}
+
+		fieldName := field.Name
 
 		if tmp.Kind() != reflect.Interface && tmp.Kind() != reflect.Struct {
 			d.addField(v.Type().String(), fieldName+" ("+tmp.Type().String()+")", level)
