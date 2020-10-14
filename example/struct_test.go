@@ -60,6 +60,19 @@ func TestDraw(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func TestDraw2(t *testing.T) {
+	a := MakeApplication()
+	ret := structgraph.Draw(a)
+	_ = ioutil.WriteFile("test.puml", []byte("@startuml\n"+ret+"@enduml"), 0775)
+	err := ioutil.WriteFile("test.dot", []byte(ret), 0775)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = structgraph.GenPngFromQuickChartApi(ret, "test.png")
+	if err != nil {
+		t.Fatal(err)
+	}
+}
 
 func genPngByDot() {
 	cmd := exec.Command(`/bin/sh`, `-c`, "dot test.dot -T png -o test.png")
