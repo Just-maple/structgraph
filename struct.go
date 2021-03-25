@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math"
 	"reflect"
 	"strings"
@@ -42,7 +43,11 @@ func Draw(in interface{}, opts ...Option) string {
 	graph := gographviz.NewGraph()
 	_ = gographviz.Analyse(graphAst, graph)
 	dw := &drawer{graph: graph, edgeStore: map[string]bool{}, main: main}
-	b, _ := getModBase()
+	b, err := getModBase()
+	if err != nil {
+		log.Printf("get mod file error: %v", err)
+		return ""
+	}
 	if len(b) > 0 {
 		dw.scopes = append(dw.scopes, b)
 	}

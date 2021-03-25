@@ -15,7 +15,14 @@ var modTmp string
 
 func getModBase() (modBase string, err error) {
 	modpath := getGoModFilePath()
-	mb, _ := ioutil.ReadFile(modpath)
+	if len(modpath) == 0 {
+		err = errors.New("invalid go mod env")
+		return
+	}
+	mb, err := ioutil.ReadFile(modpath)
+	if err != nil {
+		return
+	}
 	f, err := modfile.Parse("", mb, func(path, version string) (s string, e error) {
 		return version, nil
 	})
