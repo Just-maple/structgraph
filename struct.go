@@ -2,6 +2,7 @@ package structgraph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -27,9 +28,13 @@ type (
 	}
 )
 
-func GenPuml(app interface{}, opts ...Option) (err error) {
+func GenPuml(app interface{}, filename string, opts ...Option) (err error) {
 	ret := Draw(app, opts...)
-	err = ioutil.WriteFile("test.puml", []byte("@startuml\n"+ret+"@enduml"), 0775)
+	if len(filename) == 0 {
+		err = errors.New("invalid filename")
+		return
+	}
+	err = ioutil.WriteFile(filename, []byte("@startuml\n"+ret+"@enduml"), 0775)
 	return
 }
 
